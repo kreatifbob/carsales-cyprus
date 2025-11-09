@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { signUp, supabase, signInWithProvider } from '../lib/supabase';
-import SlideCaptcha from '../components/SlideCaptcha';
 import '../styles/pages/auth.css';
 
 export default function Register() {
@@ -13,16 +12,9 @@ export default function Register() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!captchaVerified) {
-      setError('Please complete the captcha verification');
-      return;
-    }
-
     setLoading(true);
     setError('');
     const { data, error: authError } = await signUp(email, password);
@@ -87,13 +79,7 @@ export default function Register() {
             <label>{t('auth.password')}</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={loading} />
           </div>
-
-          <SlideCaptcha
-            onSuccess={() => setCaptchaVerified(true)}
-            onFail={() => setCaptchaVerified(false)}
-          />
-
-          <button type="submit" className="btn-submit" disabled={loading || !captchaVerified}>
+          <button type="submit" className="btn-submit" disabled={loading}>
             {loading ? t('common.loading') : t('auth.signUp')}
           </button>
         </form>
